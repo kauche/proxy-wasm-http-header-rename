@@ -58,6 +58,13 @@ static_resources:
                                       "key": "original-header-2",
                                       "value": "new-header-2"
                                     }
+                                  },
+                                  {
+                                    "header": {
+                                      "key": "original-header-3",
+                                      "value": "new-header-3",
+                                      "prefix": "bearer "
+                                    }
                                   }
                                 ]
                               }

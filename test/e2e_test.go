@@ -24,6 +24,7 @@ func TestE2E(t *testing.T) {
 
 	req.Header.Set("original-header-1", "original-header-value-1")
 	req.Header.Set("original-header-2", "original-header-value-2")
+	req.Header.Set("original-header-3", "original-header-value-3")
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -80,6 +81,20 @@ func TestE2E(t *testing.T) {
 	_, ok = echores.Headers["original-header-2"]
 	if ok {
 		t.Error("original-header-2 header should be removed")
+		return
+	}
+
+	newHeader3, ok := echores.Headers["new-header-3"]
+	if !ok {
+		t.Error("new-header-3 header is not found")
+		return
+	}
+	if len(newHeader3.Value) != 1 {
+		t.Errorf("new-header-3 header has invalid number of values: %d", len(newHeader3.Value))
+		return
+	}
+	if newHeader3.Value[0] != "bearer original-header-value-3" {
+		t.Errorf("the value for new-header-3 is expected to be `bearer original-header-value3`, but got `%s`", newHeader3.Value[0])
 		return
 	}
 }

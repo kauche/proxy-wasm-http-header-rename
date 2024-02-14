@@ -5,6 +5,7 @@ const (
 	configKeyHeader                 = "header"
 	configKeyKey                    = "key"
 	configKeyValue                  = "value"
+	configKeyPrefix                 = "prefix"
 )
 
 type pluginConfiguration struct {
@@ -16,6 +17,7 @@ type requestHeaderToRename struct {
 }
 
 type headerValue struct {
-	key   string
-	value string
+	key    string
+	value  string
+	prefix string
 }

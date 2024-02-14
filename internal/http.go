@@ -17,7 +17,7 @@ type httpContext struct {
 
 func (c *httpContext) OnHttpRequestHeaders(_ int, _ bool) types.Action {
 	for _, requestHeaderToRename := range c.configuration.requestHeadersToRename {
-		if err := c.renameRequestHeader(requestHeaderToRename.header.key, requestHeaderToRename.header.value); err != nil {
+		if err := c.renameRequestHeader(requestHeaderToRename.header); err != nil {
 			setErrorHTTPResponseWithLog("failed to rename the header: %s", err)
 			return types.ActionPause
 		}
@@ -26,22 +26,27 @@ func (c *httpContext) OnHttpRequestHeaders(_ int, _ bool) types.Action {
 	return types.ActionContinue
 }
 
-func (c *httpContext) renameRequestHeader(origName, newName string) error {
-	value, err := proxywasm.GetHttpRequestHeader(origName)
+func (c *httpContext) renameRequestHeader(h headerValue) error {
+	value, err := proxywasm.GetHttpRequestHeader(h.key)
 	if err != nil {
 		if err == types.ErrorStatusNotFound {
 			return nil
 		}
 
-		return fmt.Errorf("failed to get the original header, `%s`: %w", origName, err)
+		return fmt.Errorf("failed to get the original header, `%s`: %w", h.key, err)
 	}
 
-	if err := proxywasm.ReplaceHttpRequestHeader(newName, value); err != nil {
-		return fmt.Errorf("failed to set the new header, `%s`: %w", newName, err)
+	newValue := value
+	if h.prefix != "" {
+		newValue = h.prefix + value
 	}
 
-	if err := proxywasm.RemoveHttpRequestHeader(origName); err != nil {
-		return fmt.Errorf("failed to delete the original header, `%s`: %w", origName, err)
+	if err := proxywasm.ReplaceHttpRequestHeader(h.value, newValue); err != nil {
+		return fmt.Errorf("failed to set the new header, `%s`: %w", h.value, err)
+	}
+
+	if err := proxywasm.RemoveHttpRequestHeader(h.key); err != nil {
+		return fmt.Errorf("failed to delete the original header, `%s`: %w", h.key, err)
 	}
 
 	return nil

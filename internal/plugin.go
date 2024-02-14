@@ -75,10 +75,13 @@ func getPluginConfiguration() (*pluginConfiguration, error) {
 			return nil, errors.New("the header value for renaming is empty")
 		}
 
+		prefix := h.Get(configKeyPrefix).String()
+
 		headersToRename[i] = requestHeaderToRename{
 			header: headerValue{
-				key:   key,
-				value: value,
+				key:    key,
+				value:  value,
+				prefix: prefix,
 			},
 		}
 	}

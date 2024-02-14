@@ -1,7 +1,7 @@
 ---
 services:
   envoy:
-    image: envoyproxy/envoy:v1.24.1
+    image: envoyproxy/envoy:v1.29.1
     ports:
       - ${PORT-8080}:8080
     volumes:
