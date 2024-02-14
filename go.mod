@@ -1,6 +1,6 @@
 module github.com/kauche/proxy-wasm-http-header-rename
 
-go 1.19
+go 1.21
 
 require (
 	github.com/tetratelabs/proxy-wasm-go-sdk v0.20.0
