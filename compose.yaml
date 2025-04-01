@@ -4,6 +4,7 @@ services:
     image: envoyproxy/envoy:v1.29.1
     ports:
       - ${PORT-8080}:8080
+      - ${ADMIN_PORT-15000}:15000
     volumes:
       - ./test/envoy.yaml:/etc/envoy/envoy.yaml
       - ./.bin/proxy-wasm-http-header-rename.wasm:/etc/envoy/proxy-wasm-http-header-rename.wasm

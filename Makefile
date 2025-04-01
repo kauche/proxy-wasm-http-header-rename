@@ -37,6 +37,11 @@ test-docker:
 build: $(TINYGO)
 	@$(TINYGO) build -o $(BIN_DIR)/proxy-wasm-http-header-rename.wasm -scheduler=none -target=wasi .
 
+.PHONY: build-rust
+build-rust:
+	@cargo build --target wasm32-wasip1 --release
+	@cp ./target/wasm32-wasip1/release/proxy_wasm_http_header_rename.wasm $(BIN_DIR)/proxy-wasm-http-header-rename.wasm
+
 .PHONY: build-docker
 build-docker:
 	@docker run \
@@ -47,3 +52,14 @@ build-docker:
 		--workdir /workspace \
 		golang:1.21.7-bullseye \
 		make build
+
+.PHONY: build-docker-rust
+build-docker-rust:
+	@docker build -t proxy-wasm-http-header-rename-rust-builder -f ./Dockerfile .
+	@docker run \
+		--rm \
+		--volume "$(shell pwd):/workspace" \
+		--user "$(shell id -u):$(shell id -g)" \
+		--workdir /workspace \
+		proxy-wasm-http-header-rename-rust-builder \
+		make build-rust
